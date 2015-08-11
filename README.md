@@ -206,3 +206,111 @@ Model.reset_column_information
 * Prefer using `feature` and `scenario` instead of `describe` and `it`
 * Take care to not use brittle selectors
 
+# SQL
+
+## General
+
+* Write SQL keywords in upper case
+* Write table names, column names, and aliases in lower case
+* Put primary keywords for the main query at the beginning of a new line. E.g.,
+
+  ```
+  SELECT ...
+  FROM ...
+  WHERE ...
+  ORDER BY ...
+  ```
+
+## SELECT
+
+* Put the first selected column on the same line as `SELECT`. Align any other
+  selected column under the first column name.  E.g.,
+
+  ```
+  SELECT users.first_name,
+         users.last_name,
+         posts.title,
+         posts.body
+  FROM ...
+  ```
+* Qualify column names with their table name
+* Alias column names at will
+
+
+## FROM
+
+* In general, avoid aliasing tables; use the full table name instead.
+* **Do** alias tables when your query refers to the same table more than once in
+  different contexts. In this case, choose aliases that explain how the table is
+  used differently in each context.  E.g.,
+
+  ```
+  SELECT supervisors.first_name AS "supervisor_first_name",
+         supervisors.last_name AS "supervisor_last_name",
+         employees.first_name AS "employee_first_name",
+         employees.last name AS "employee_last_name"
+  FROM people AS "employees"
+       JOIN people AS "supervisors"
+         ON employees.supervisor_id = supervisors.id
+  ```
+
+### JOIN
+
+* Start `JOIN` clauses on the line after the `FROM` clause, indented as far
+  as the first word after `FROM` on the line above.
+* Start `ON` clauses on the line after its `JOIN` clause, so that the word `ON`
+  ends in the same column as the word `JOIN` on the line above.
+* Start `AND` or `OR` clauses on the line after the `JOIN` clause, indented as
+  far as the first word after `JOIN` on the line above.
+
+  ```
+  SELECT ...
+  FROM assays
+       JOIN preps
+         ON assays.source_id = preps.id
+            AND assays.source_type = 'Prep'
+       JOIN cultures ...
+         ON ...
+  WHERE ...
+  ```
+
+## WHERE
+
+* Start `AND` or `OR` clauses on the line after the `WHERE` clause, indented as
+  far as the first word after `WHERE` on the line above.
+* If parentheses are required or clarifying, start a new line after the opening
+  paren and indent lines inside the parentheses. Place the closing paren on a new
+  line indented as far as the start of the line where the parentheses start:
+
+  ```
+  SELECT ...
+  FROM ...
+  WHERE scored_on IS NOT NULL
+        OR (
+            discarded = TRUE
+              AND id < 500
+        )
+  ORDER BY ...
+  ```
+
+## Nested queries
+
+* Give explanatory aliases to nested queries when it is needed or clarifying
+* Start a new line after the opening paren and indent lines inside the parentheses.
+  Place the closing paren on a new line indented as far as the start of the line
+  where the parentheses start, followed by the alias if one is used:
+
+  ```
+  SELECT ...
+  FROM (
+    SELECT COUNT(*) AS "num_positions_filled",
+           box_id
+    FROM stocks
+    WHERE disabled_on IS NULL
+    GROUP BY box_id
+  ) AS "box_counts"
+
+  ```
+* Use the same style guidelines as the main query, but indented
+
+
